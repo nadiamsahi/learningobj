@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Library Search Drag and Drop</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    padding: 20px;
+    color: #212121;
+    max-width: 900px;
+    margin: auto;
+  }
+
+  h2 {
+    color: #ba0c2f;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+
+  .draggable {
+    padding: 10px;
+    background-color: #e6e6e6;
+    border: 2px solid #ba0c2f;
+    border-radius: 5px;
+    cursor: move;
+    width: 200px;
+    text-align: center;
+    font-size: 0.95em;
+  }
+
+  .dropzone {
+    background-color: #fff;
+    border: 2px dashed #ba0c2f;
+    border-radius: 10px;
+    padding: 10px;
+    width: 200px;
+    min-height: 60px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .dropzone.hovered {
+    background-color: #ffe6ea;
+  }
+
+  .label {
+    font-weight: bold;
+    font-size: 0.95em;
+    margin-bottom: 5px;
+    color: #444;
+  }
+</style>
+</head>
+<body>
+
+<h2>Match the Search Need to the Library Tool</h2>
+<p>Which tool would you choose for each search need? Drag the example to the best-matching library search option.</p>
+
+<div class="container" id="dropzones">
+  <div class="dropzone" data-match="Catalog Search"><div class="label">Catalog Search</div></div>
+  <div class="dropzone" data-match="Books Only"><div class="label">Books Only</div></div>
+  <div class="dropzone" data-match="Articles Only"><div class="label">Articles Only</div></div>
+  <div class="dropzone" data-match="Journals Only"><div class="label">Journals Only</div></div>
+  <div class="dropzone" data-match="Databases"><div class="label">Databases</div></div>
+  <div class="dropzone" data-match="Research Guides"><div class="label">Research Guides</div></div>
+</div>
+
+<h3 style="margin-top: 20px;">Search Needs</h3>
+<div class="container" id="draggables">
+  <div class="draggable" draggable="true" data-match="Books Only">A physical copy of *The House on Mango Street*</div>
+  <div class="draggable" draggable="true" data-match="Articles Only">A peer-reviewed article on climate anxiety</div>
+  <div class="draggable" draggable="true" data-match="Journals Only">A scholarly journal in sociology</div>
+  <div class="draggable" draggable="true" data-match="Databases">A place to find lots of research on psychology specifically.</div>
+  <div class="draggable" draggable="true" data-match="Research Guides">Guidance on where to begin research for a biology class</div>
+  <div class="draggable" draggable="true" data-match="Catalog Search">A mix of books and articles on the Vietnam War</div>
+</div>
+
+<script>
+const draggables = document.querySelectorAll('.draggable');
+const dropzones = document.querySelectorAll('.dropzone');
+
+draggables.forEach(item => {
+  item.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', e.target.dataset.match);
+    e.dataTransfer.setData('text/html', e.target.outerHTML);
+    e.dataTransfer.effectAllowed = 'move';
+    e.target.classList.add('dragging');
+  });
+
+  item.addEventListener('dragend', e => {
+    e.target.classList.remove('dragging');
+  });
+});
+
+dropzones.forEach(zone => {
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('hovered');
+  });
+
+  zone.addEventListener('dragleave', () => {
+    zone.classList.remove('hovered');
+  });
+
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('hovered');
+    const matchText = e.dataTransfer.getData('text/plain');
+    if (zone.dataset.match === matchText) {
+      zone.innerHTML += `<div style='margin-top:5px;'>✅ ${matchText}</div>`;
+    } else {
+      zone.innerHTML += `<div style='margin-top:5px; color: #ba0c2f;'>❌ Try again</div>`;
+    }
+  });
+});
+</script>
+
+</body>
+</html>
