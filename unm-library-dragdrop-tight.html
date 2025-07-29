@@ -1,80 +1,72 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Library Search Drag and Drop</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    padding: 20px;
-    color: #212121;
-    max-width: 900px;
-    margin: auto;
-  }
-
-  h2 {
-    color: #ba0c2f;
-    margin-bottom: 10px;
-  }
-
-  p {
-    margin-top: 0;
-    margin-bottom: 20px;
-  }
-
-  .container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin-bottom: 30px;
-  }
-
-  .draggable {
-    padding: 10px;
-    background-color: #e6e6e6;
-    border: 2px solid #ba0c2f;
-    border-radius: 5px;
-    cursor: move;
-    width: 200px;
-    text-align: center;
-    font-size: 0.95em;
-  }
-
-  .dropzone {
-    background-color: #fff;
-    border: 2px dashed #ba0c2f;
-    border-radius: 10px;
-    padding: 10px;
-    width: 200px;
-    min-height: 60px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .dropzone.hovered {
-    background-color: #ffe6ea;
-  }
-
-  .label {
-    font-weight: bold;
-    font-size: 0.95em;
-    margin-bottom: 5px;
-    color: #444;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UNM Library Search Activity</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    h2 {
+      color: #ba0c2f;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    .dropzone, .tile {
+      width: 30%;
+      min-height: 80px;
+      background-color: #fff;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      margin: 10px;
+      padding: 10px;
+      box-shadow: 2px 2px 5px #aaa;
+      text-align: center;
+    }
+    .dropzone {
+      background-color: #e6eff2;
+      color: #0c234b;
+    }
+    .tile {
+      background-color: #ffd100;
+      cursor: grab;
+      color: #0c234b;
+    }
+    .feedback {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+      min-height: 1.5em;
+    }
+    #resetBtn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #ba0c2f;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #resetBtn:hover {
+      background-color: #a10b29;
+    }
+  </style>
 </head>
 <body>
+  <h2>Which Search Should You Use?</h2>
+  <p style="text-align:center;">Drag each example result to the search tool you’d use to find it.</p>
 
-<h2>Match the Search Need to the Library Tool</h2>
-<p>Which tool would you choose for each search need? There may be more than one possible answer, but consider the best option for each search need. 
-Drag the example to the best-matching library search option.</p>
-
- <div class="container" id="dropzones">
+  <div class="container" id="dropzones">
     <div class="dropzone" data-answer="Catalog Search">Catalog Search</div>
     <div class="dropzone" data-answer="Books Only">Books Only</div>
     <div class="dropzone" data-answer="Articles Only">Articles Only</div>
