@@ -74,64 +74,72 @@
 <p>Which tool would you choose for each search need? There may be more than one possible answer, but consider the best option for each search need. 
 Drag the example to the best-matching library search option.</p>
 
-<div class="container" id="dropzones">
-  <div class="dropzone" data-match="Catalog Search"><div class="label">Catalog Search</div></div>
-  <div class="dropzone" data-match="Books Only"><div class="label">Books Only</div></div>
-  <div class="dropzone" data-match="Articles Only"><div class="label">Articles Only</div></div>
-  <div class="dropzone" data-match="Journals Only"><div class="label">Journals Only</div></div>
-  <div class="dropzone" data-match="Databases"><div class="label">Databases</div></div>
-  <div class="dropzone" data-match="Research Guides"><div class="label">Research Guides</div></div>
-</div>
+ <div class="container" id="dropzones">
+    <div class="dropzone" data-answer="Catalog Search">Catalog Search</div>
+    <div class="dropzone" data-answer="Books Only">Books Only</div>
+    <div class="dropzone" data-answer="Articles Only">Articles Only</div>
+    <div class="dropzone" data-answer="Journals Only">Journals Only</div>
+    <div class="dropzone" data-answer="Databases">Databases</div>
+    <div class="dropzone" data-answer="Research Guides">Research Guides</div>
+  </div>
 
-<h3 style="margin-top: 20px;">Search Needs</h3>
-<div class="container" id="draggables">
-  <div class="draggable" draggable="true" data-match="Books Only">A physical copy of the book *The House on Mango Street*</div>
-  <div class="draggable" draggable="true" data-match="Articles Only">A peer-reviewed article on climate anxiety</div>
-  <div class="draggable" draggable="true" data-match="Journals Only">A scholarly journal in sociology</div>
-  <div class="draggable" draggable="true" data-match="Databases">A place to find lots of research on psychology specifically.</div>
-  <div class="draggable" draggable="true" data-match="Research Guides">Guidance on where to begin research for a biology class</div>
-  <div class="draggable" draggable="true" data-match="Catalog Search">A mix of books and articles on the Vietnam War</div>
-</div>
+  <div class="feedback" id="feedback"></div>
 
-<script>
-const draggables = document.querySelectorAll('.draggable');
-const dropzones = document.querySelectorAll('.dropzone');
+  <div class="container" id="tiles">
+    <div class="tile" draggable="true" data-answer="Catalog Search">A physical copy of *Kindred* by Octavia Butler</div>
+    <div class="tile" draggable="true" data-answer="Books Only">An eBook on Navajo weaving</div>
+    <div class="tile" draggable="true" data-answer="Articles Only">A peer-reviewed article about bilingual education</div>
+    <div class="tile" draggable="true" data-answer="Journals Only">The journal *Science Fiction Studies*</div>
+    <div class="tile" draggable="true" data-answer="Databases">A place to find lots of research on psychology specifically.</div>
+    <div class="tile" draggable="true" data-answer="Research Guides">Help figuring out where to start research on copyright law</div>
+  </div>
 
-draggables.forEach(item => {
-  item.addEventListener('dragstart', e => {
-    e.dataTransfer.setData('text/plain', e.target.dataset.match);
-    e.dataTransfer.setData('text/html', e.target.outerHTML);
-    e.dataTransfer.effectAllowed = 'move';
-    e.target.classList.add('dragging');
-  });
+  <button id="resetBtn">Reset</button>
 
-  item.addEventListener('dragend', e => {
-    e.target.classList.remove('dragging');
-  });
-});
+  <script>
+    const tilesContainer = document.getElementById("tiles");
+    const dropzones = document.querySelectorAll(".dropzone");
+    const feedback = document.getElementById("feedback");
+    const resetBtn = document.getElementById("resetBtn");
 
-dropzones.forEach(zone => {
-  zone.addEventListener('dragover', e => {
-    e.preventDefault();
-    zone.classList.add('hovered');
-  });
+    let dragged;
 
-  zone.addEventListener('dragleave', () => {
-    zone.classList.remove('hovered');
-  });
+    document.querySelectorAll(".tile").forEach(tile => {
+      tile.addEventListener("dragstart", e => {
+        dragged = tile;
+        setTimeout(() => tile.style.display = "none", 0);
+      });
+      tile.addEventListener("dragend", e => {
+        tile.style.display = "block";
+      });
+    });
 
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    zone.classList.remove('hovered');
-    const matchText = e.dataTransfer.getData('text/plain');
-    if (zone.dataset.match === matchText) {
-      zone.innerHTML += `<div style='margin-top:5px;'>✅ ${matchText}</div>`;
-    } else {
-      zone.innerHTML += `<div style='margin-top:5px; color: #ba0c2f;'>❌ Try again</div>`;
-    }
-  });
-});
-</script>
+    dropzones.forEach(zone => {
+      zone.addEventListener("dragover", e => e.preventDefault());
+      zone.addEventListener("drop", e => {
+        e.preventDefault();
+        if (dragged.dataset.answer === zone.dataset.answer) {
+          zone.appendChild(dragged);
+          dragged.setAttribute("draggable", "false");
+          dragged.style.cursor = "default";
+          dragged.style.backgroundColor = "#d0e6a5";
+          feedback.textContent = "";
+        } else {
+          feedback.textContent = "That’s not quite right—try again!";
+          setTimeout(() => feedback.textContent = "", 2000);
+        }
+      });
+    });
 
+    resetBtn.addEventListener("click", () => {
+      document.querySelectorAll(".tile").forEach(tile => {
+        tile.setAttribute("draggable", "true");
+        tile.style.backgroundColor = "#ffd100";
+        tile.style.cursor = "grab";
+        tilesContainer.appendChild(tile);
+      });
+      feedback.textContent = "";
+    });
+  </script>
 </body>
 </html>
