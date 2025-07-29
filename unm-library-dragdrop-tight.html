@@ -1,137 +1,142 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>UNM Library Search Activity</title>
+  <title>UNM Library Drag and Drop Activity</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
+      background-color: #f6f6f6;
       padding: 20px;
+      color: #212121;
     }
     h2 {
-      color: #ba0c2f;
       text-align: center;
+      color: #ba0c2f; /* UNM Red */
     }
     .container {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-around;
-      margin-bottom: 20px;
+      justify-content: space-between;
+      margin-bottom: 40px;
     }
-    .dropzone, .tile {
+    .drop-zone {
       width: 30%;
-      min-height: 80px;
-      background-color: #fff;
-      border: 2px solid #ccc;
-      border-radius: 10px;
-      margin: 10px;
+      min-height: 120px;
+      background-color: #e5e5e5;
+      border: 2px dashed #ba0c2f;
+      border-radius: 8px;
       padding: 10px;
-      box-shadow: 2px 2px 5px #aaa;
+      margin: 10px 0;
       text-align: center;
+      font-weight: bold;
     }
-    .dropzone {
-      background-color: #e6eff2;
-      color: #0c234b;
+    .draggable-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
     }
-    .tile {
-      background-color: #ffd100;
+    .draggable {
+      width: 30%;
+      background-color: #ffc627; /* UNM Gold */
+      border-radius: 8px;
+      padding: 10px;
+      margin: 10px 0;
       cursor: grab;
-      color: #0c234b;
+      text-align: center;
+      font-weight: bold;
     }
     .feedback {
-      color: red;
-      text-align: center;
+      color: #ba0c2f;
+      font-weight: bold;
       margin-top: 10px;
-      min-height: 1.5em;
+      text-align: center;
+      display: none;
     }
-    #resetBtn {
+    button {
       display: block;
-      margin: 20px auto;
-      padding: 10px 20px;
+      margin: 30px auto;
       background-color: #ba0c2f;
-      color: #fff;
+      color: white;
       border: none;
-      border-radius: 5px;
-      font-size: 16px;
+      padding: 10px 20px;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
     }
-    #resetBtn:hover {
-      background-color: #a10b29;
+    button:hover {
+      background-color: #9e0c26;
     }
   </style>
 </head>
 <body>
-  <h2>Which Search Should You Use?</h2>
-  <p style="text-align:center;">Drag each example result to the search tool you’d use to find it.</p>
+  <h2>Match the Library Search to the Example</h2>
+  <p style="text-align:center;">Drag each description to the correct search type.</p>
 
-  <div class="container" id="dropzones">
-    <div class="dropzone" data-answer="Catalog Search">Catalog Search</div>
-    <div class="dropzone" data-answer="Books Only">Books Only</div>
-    <div class="dropzone" data-answer="Articles Only">Articles Only</div>
-    <div class="dropzone" data-answer="Journals Only">Journals Only</div>
-    <div class="dropzone" data-answer="Databases">Databases</div>
-    <div class="dropzone" data-answer="Research Guides">Research Guides</div>
+  <div class="draggable-container" id="draggables">
+    <div class="draggable" draggable="true" data-match="Catalog Search">A mix of books and articles on the Vietnam War</div>
+    <div class="draggable" draggable="true" data-match="Books Only">A physical copy of the book "The House on Mango Street"</div>
+    <div class="draggable" draggable="true" data-match="Articles Only">A peer-reviewed article on climate anxiety</div>
+    <div class="draggable" draggable="true" data-match="Journals Only">A scholarly journal in sociology</div>
+    <div class="draggable" draggable="true" data-match="Databases">A tool to search across many databases for research in psychology</div>
+    <div class="draggable" draggable="true" data-match="Research Guides">Guidance on where to begin research for a biology class</div>
   </div>
 
-  <div class="feedback" id="feedback"></div>
-
-  <div class="container" id="tiles">
-    <div class="tile" draggable="true" data-answer="Catalog Search">A mix of books and articles on the Vietnam War</div>
-    <div class="tile" draggable="true" data-answer="Books Only">A physical copy of the book "The House on Mango Street"</div>
-    <div class="tile" draggable="true" data-answer="Articles Only">A peer-reviewed article on climate anxiety</div>
-    <div class="tile" draggable="true" data-answer="Journals Only">A scholarly journal in sociology</div>
-    <div class="tile" draggable="true" data-answer="Databases">A tool to search across many databases in pyschology</div>
-    <div class="tile" draggable="true" data-answer="Research Guides">Guidance on where to begin research for a biology class</div>
+  <div class="container">
+    <div class="drop-zone" data-name="Catalog Search">Catalog Search</div>
+    <div class="drop-zone" data-name="Books Only">Books Only</div>
+    <div class="drop-zone" data-name="Articles Only">Articles Only</div>
+    <div class="drop-zone" data-name="Journals Only">Journals Only</div>
+    <div class="drop-zone" data-name="Databases">Databases</div>
+    <div class="drop-zone" data-name="Research Guides">Research Guides</div>
   </div>
 
-  <button id="resetBtn">Reset</button>
+  <div id="feedback" class="feedback"></div>
+  <button onclick="resetActivity()">Reset</button>
 
   <script>
-    const tilesContainer = document.getElementById("tiles");
-    const dropzones = document.querySelectorAll(".dropzone");
-    const feedback = document.getElementById("feedback");
-    const resetBtn = document.getElementById("resetBtn");
+    const draggables = document.querySelectorAll('.draggable');
+    const dropZones = document.querySelectorAll('.drop-zone');
+    const feedback = document.getElementById('feedback');
+    let correctCount = 0;
 
-    let dragged;
-
-    document.querySelectorAll(".tile").forEach(tile => {
-      tile.addEventListener("dragstart", e => {
-        dragged = tile;
-        setTimeout(() => tile.style.display = "none", 0);
-      });
-      tile.addEventListener("dragend", e => {
-        tile.style.display = "block";
+    draggables.forEach(draggable => {
+      draggable.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', e.target.textContent);
+        e.dataTransfer.setData('data-match', draggable.dataset.match);
+        e.dataTransfer.setData('id', e.target.id);
+        draggable.classList.add('dragging');
       });
     });
 
-    dropzones.forEach(zone => {
-      zone.addEventListener("dragover", e => e.preventDefault());
-      zone.addEventListener("drop", e => {
+    dropZones.forEach(zone => {
+      zone.addEventListener('dragover', e => e.preventDefault());
+      zone.addEventListener('drop', e => {
         e.preventDefault();
-        if (dragged.dataset.answer === zone.dataset.answer) {
-          zone.appendChild(dragged);
-          dragged.setAttribute("draggable", "false");
-          dragged.style.cursor = "default";
-          dragged.style.backgroundColor = "#d0e6a5";
-          feedback.textContent = "";
+        const draggedText = e.dataTransfer.getData('text/plain');
+        const match = e.dataTransfer.getData('data-match');
+        const dropTarget = zone.dataset.name;
+        if (match === dropTarget) {
+          zone.innerHTML += `<div style='margin-top:10px;'>${draggedText}</div>`;
+          const draggingElement = [...draggables].find(d => d.textContent === draggedText);
+          if (draggingElement) draggingElement.remove();
+          correctCount++;
         } else {
-          feedback.textContent = "That’s not quite right—try again!";
-          setTimeout(() => feedback.textContent = "", 2000);
+          feedback.textContent = `Oops! That's not right for "${dropTarget}". Try again.`;
+          feedback.style.display = 'block';
+          setTimeout(() => {
+            feedback.style.display = 'none';
+            feedback.textContent = '';
+          }, 2000);
         }
       });
     });
 
-    resetBtn.addEventListener("click", () => {
-      document.querySelectorAll(".tile").forEach(tile => {
-        tile.setAttribute("draggable", "true");
-        tile.style.backgroundColor = "#ffd100";
-        tile.style.cursor = "grab";
-        tilesContainer.appendChild(tile);
-      });
-      feedback.textContent = "";
-    });
+    function resetActivity() {
+      location.reload();
+    }
   </script>
 </body>
 </html>
